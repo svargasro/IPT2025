@@ -343,58 +343,58 @@ vector<double> LatticeBoltzmann::FOnCoin(double nu, double dt, int N, double a, 
 
 */
 
+  double aD2n = (a/2.0)*(1.0/N);
+  double aDn = (a)*(1.0/N);
+  double bD2n = (b/2.0)*(1.0/N);
+  double bDn = (b)*(1.0/N);
 
-  vector<double> vectorNormal1 = {-b/(2.0*N), a*(1.0/N)};
-  vector<double> vectorNormal2 = {-b/(2.0*N),-a*(1.0/N)};
-  vector<double> vectorNormal3 = {(1.0/N)*(b),0};
+  double vectorNormaly_x = 0.0; //Componente x del vector normal de la recta y=y1 ó y=y2
+  double vectorNormaly_y = aDn; //Componente y del vector normal de la recta y=y1 ó y=y2
+  double vectorNormalx_x = bDn;
+  double vectorNormalx_y = 0.0;
+
+
 
   // cout<<"VectorNormal1: ("<<vectorNormal1[0]<<" "<<vectorNormal1[1]<<")"<<"\n";
-  // cout<<"VectorNormal2: ("<<vectorNormal2[0]<<" "<<vectorNormal2[1]<<")"<<"\n";
-  // cout<<"VectorNormal3: ("<<vectorNormal3[0]<<" "<<vectorNormal3[1]<<")"<<"\n";
 
   //Guardan la fuerza total.
   double fTotalX = 0;
   double fTotalY = 0;
 
-  vector<double> vectorInicial1 = {(d-a)+(1.0*a)/(2.0*N),(Ly/2.0)+(1.0*b)/(4.0*N)};
-  vector<double> vectorInicial2 = {(d-a)+(1.0*a)/(2.0*N),(Ly/2.0)+(-1.0*b)/(4.0*N)};
-  vector<double> vectorInicial3 = {d,(Ly/2.0)-(b/2.0)+(b/(2.0*N))};
 
-  double dx1 = vectorNormal1[0];
-  double dy1 = vectorNormal1[1];
+  vector<double> vectorInicialy1 = {(d-a) + aD2n , e};
+  vector<double> vectorInicialy2 = {(d-a) + aD2n, e+b};
+  vector<double> vectorInicialx1 = {d-a,e+bD2n};
+  vector<double> vectorInicialx2 = {d,bD2n+e};
 
-  double dx2 = vectorNormal2[0];
-  double dy2 = vectorNormal2[1];
+  double y1Central_y = vectorInicialy1[1];
+  double y2Central_y = vectorInicialy2[1];
+  double x1Central_x = vectorInicialx1[0];
+  double x2Central_x = vectorInicialx2[0];
 
-  double dx3 = vectorNormal3[0];
-  double dy3 = vectorNormal3[1];
-
+  double y1Central_x, y2Central_x, x1Central_y,x2Central_y;
 
   //Se recorre cada línea.
   for (int m=0;m<N; m++) {
 
-    double x1Central= vectorInicial1[0]+(m*(1.0/N))*a;
-    double y1Central= vectorInicial1[1]+(m*(1.0/N))*(b/(2.0));
-
-    double x2Central= vectorInicial2[0]+(m*(1.0/N))*a;
-    double y2Central= vectorInicial2[1]+(m*(1.0/N))*(-b/(2.0));
-
-    double x3Central= vectorInicial3[0];
-    double y3Central= vectorInicial3[1]+(m*(1.0/N))*b;
+    y1Central_x = vectorInicialy1[0] + m*aDn;
+    y2Central_x = vectorInicialy2[0] + m*aDn;
+    x1Central_y = vectorInicialx1[1] + m*bDn;
+    x2Central_y = vectorInicialx2[1] + m*bDn;
 
     // cout<<"\n"<<"Vectorx1y1Central: ("<<x1Central<<" "<<y1Central<<")"<<" m:"<<m<<"\n";
-    // cout<<"Vectorx2y2Central: ("<<x2Central<<" "<<y2Central<<")"<<" m:"<<m<<"\n";
-    // cout<<"Vectorx3y3Central: ("<<x3Central<<" "<<y3Central<<")"<<" m:"<<m<<"\n";
+    // dF(x1Central,y1Central,dx1,dy1,nu,dt)
+    vector<double> fIteracionY1 = dF(y1Central_x,y1Central_y,vectorNormaly_x,(-1.0)*vectorNormaly_y,nu,dt); //Se calcula el dF debido al segmento de la línea inferior.
+    vector<double> fIteracionY2 = dF(y2Central_x,y2Central_y,vectorNormaly_x,vectorNormaly_y, nu, dt); //Se calcula el dF debido al segmento de la línea superior.
+    vector<double> fIteracionX1 = dF(x1Central_x,x1Central_y,(-1.0)*vectorNormalx_x,vectorNormalx_y,nu,dt); //Se calcula el dF debido al segmento de la línea izquierda.
+    vector<double> fIteracionX2 = dF(x2Central_x,x2Central_y,vectorNormalx_x,vectorNormalx_y,nu,dt); //Se calcula el dF debido al segmento de la línea derecha.
 
-    vector<double> fIteracion1 = dF(x1Central,y1Central,dx1,dy1,nu,dt); //Se calcula el dF debido al segmento de la línea creciente.
-    vector<double> fIteracion2 = dF(x2Central,y2Central,dx2,dy2,nu,dt); //Se calcula el dF debido al segmento de la línea decreciente.
-    vector<double> fIteracion3 = dF(x3Central,y3Central,dx3,dy3,nu,dt); //Se calcula el dF debido al segmento de la línea vertical.
 
-    fTotalX += fIteracion1[0]+fIteracion2[0]+fIteracion3[0];
-    fTotalY += fIteracion1[1]+fIteracion2[1]+fIteracion3[1];
+    fTotalX += fIteracionY1[0]+fIteracionY2[0]+fIteracionX1[0]+fIteracionX2[0];
+    fTotalY += fIteracionY1[1]+fIteracionY2[1]+fIteracionX1[1]+fIteracionX2[1];
   }
-  vector<double> fuerzaSobreTriangulo = {fTotalX,fTotalY};
-  return fuerzaSobreTriangulo;
+  vector<double> fuerzaSobreMoneda = {fTotalX,fTotalY};
+  return fuerzaSobreMoneda;
 }
 
 
@@ -420,17 +420,17 @@ void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
 int main(int argc, char *argv[]) {
 
   LatticeBoltzmann Air;
-  int t,tmax=500.0;
+  int t,tmax=10000.0;
   double rho0=1.0;
   double Ufan0 = 0.1;
   double dt = 1.0;
-  double a = 32.0;
-  double b = 16.0;
-  double d = 128.0;
-  double e = 16.0;
+  double a = 32.0; //Ancho
+  double b = 16.0; //Largo
+  double d = 128.0; //Ubicación del lado derecho en eje x
+  double e = 16.0; //Ubicación del lado inferior en eje y
   double nu = dt*(1/3.0)*(tau- 1.0/2);
-  int N = 16;
-  vector<double> fTriangulo = {0,0};
+  int N = 64;
+  vector<double> fCoin = {0,0};
 
   double Fx;
   double Fy;
@@ -446,10 +446,10 @@ int main(int argc, char *argv[]) {
     Air.Collision();
     Air.ImposeFields(Ufan0,a,b,d,e);
     Air.Advection();
-    // fTriangulo = Air.FOnCoin(nu, dt, N, a,b, d); //Se calcula la fuerza total sobre la moneda.
-    // Fx = fTriangulo[0];
-    // Fy = fTriangulo[1];
-    // fout<<t<<" "<<Fx<<" "<<Fy<<"\n";
+    fCoin = Air.FOnCoin(nu, dt, N, a,b, d, e); //Se calcula la fuerza total sobre la moneda.
+    Fx = fCoin[0];
+    Fy = fCoin[1];
+    fout<<t<<" "<<Fx<<" "<<Fy<<"\n";
 
   }
 
