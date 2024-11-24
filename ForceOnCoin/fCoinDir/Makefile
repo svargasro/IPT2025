@@ -14,7 +14,7 @@ wind.dat: $(TARGET).out
 
 $(TARGET).pdf FX_FY_t.png: wind.dat plot.py plotFyFx.py
 	python3 plot.py
-#	python3 plotFyFx.py
+	python3 plotFyFx.py
 
 .PHONY: clean
 
