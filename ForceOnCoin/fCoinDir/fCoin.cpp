@@ -34,7 +34,7 @@ class LatticeBoltzmann{
     double Jy(int ix,int iy,bool UseNew);
     double feq(double rho0,double Ux0,double Uy0,int i);
     void Collision(void);
-    void ImposeFields(double Ufan, double a, double b, double d);
+    void ImposeFields(double Ufan, double a, double b, double d, double e);
     void Advection(void);
     vector<double> Derivatives(int ix, int iy, double dt); //Calcula dUx/dx, dUx/dy, dUy/dx, dUy/dy dada una celda.
 
@@ -48,7 +48,7 @@ class LatticeBoltzmann{
 
     //Función que calcula el diferencial de fuerza
     vector<double> dF(double x, double y, double dx, double dy, double nu, double dt);
-    vector<double> FSobreTriangulo(double nu, double dt, int N, double a, double b, double d);
+    vector<double> FOnCoin(double nu, double dt, int N, double a, double b, double d,double e);
   
     void Start(double rho0,double Ux0,double Uy0);
     void Print(const char * NameFile,double Ufan);
@@ -119,13 +119,15 @@ void LatticeBoltzmann::Collision(void){
     }  
 }
 
-void LatticeBoltzmann::ImposeFields(double Ufan, double a, double b, double d){
-  int i,ix,iy,n0; double rho0,y1,y2,x1;
+void LatticeBoltzmann::ImposeFields(double Ufan, double a, double b, double d, double e){
+  int i,ix,iy,n0; double rho0,y1,y2,x1,x2;
   //go through all cells, looking if they are fan or obstacle
 
-  y1= (Ly-b)/2.0; //Parte inferior
+  y1= e; //Parte inferior
   y2= y1+b; //Parte superior
-  x1= d-a; //Parte izquierda
+  x2= d;         //Parte derecha
+  x1= x2-a; //Parte izquierda
+
 
   for(ix=0;ix<Lx;ix++){ //for each cell
     //Ecuaciones que describen la moneda
@@ -137,7 +139,7 @@ void LatticeBoltzmann::ImposeFields(double Ufan, double a, double b, double d){
         for(i=0;i<Q;i++){n0=n(ix,iy,i); fnew[n0]=feq(rho0,Ufan,0,i);}}
 
       //Obstáculo
-      else if(iy<y2 && iy>y1 && ix>x1 && ix<d){
+      else if(iy<y2 && iy>y1 && ix>x1 && ix<x2){
         for(i=0;i<Q;i++) {n0=n(ix,iy,i); fnew[n0]=feq(rho0,0,0,i);}
       }
       else if(iy<y1)
@@ -301,7 +303,7 @@ vector<double> LatticeBoltzmann::dF(double x,double y, double dx, double dy, dou
 
 }
 
-vector<double> LatticeBoltzmann::FSobreTriangulo(double nu, double dt, int N, double a, double b, double d){
+vector<double> LatticeBoltzmann::FOnCoin(double nu, double dt, int N, double a, double b, double d, double e){
 
 /*
   - Recibe el número N de elementos en los que se divide cada fragmento.
@@ -425,6 +427,7 @@ int main(int argc, char *argv[]) {
   double a = 32.0;
   double b = 16.0;
   double d = 128.0;
+  double e = 16.0;
   double nu = dt*(1/3.0)*(tau- 1.0/2);
   int N = 16;
   vector<double> fTriangulo = {0,0};
@@ -441,9 +444,9 @@ int main(int argc, char *argv[]) {
   //Run
   for(t=0;t<tmax;t++){
     Air.Collision();
-    Air.ImposeFields(Ufan0,a,b,d);
+    Air.ImposeFields(Ufan0,a,b,d,e);
     Air.Advection();
-    // fTriangulo = Air.FSobreTriangulo(nu, dt, N, a,b, d); //Se calcula la fuerza total sobre el triangulo.
+    // fTriangulo = Air.FOnCoin(nu, dt, N, a,b, d); //Se calcula la fuerza total sobre la moneda.
     // Fx = fTriangulo[0];
     // Fy = fTriangulo[1];
     // fout<<t<<" "<<Fx<<" "<<Fy<<"\n";
