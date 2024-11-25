@@ -8,12 +8,12 @@
 
 using namespace std;
 
-const int Lx=512;
-const int Ly=64;
+const int Lx=136;
+const int Ly=30;
 
 const int Q=9;
 
-const double tau=1.5;
+const double tau=0.6819200000;
 const double Utau=1.0/tau;
 const double UmUtau=1-Utau;
 
@@ -402,10 +402,10 @@ vector<double> LatticeBoltzmann::FOnCoin(double nu, double dt, int N, double a, 
 
 void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
   ofstream MyFile(NameFile); int ix,iy; double rho0,Ux0,Uy0;
-  for(ix=0;ix<Lx;ix+=4){
-    for(iy=0;iy<Ly;iy+=4){
+  for(ix=0;ix<Lx;ix+=1){
+    for(iy=0;iy<Ly;iy+=1){
       rho0 = rho(ix,iy,true); Ux0=Jx(ix,iy,true)/rho0; Uy0=Jy(ix,iy,true)/rho0;
-      MyFile<<ix<<" "<<iy<<" "<<Ux0/Ufan*4<<" "<<Uy0/Ufan*4<<endl;
+      MyFile<<ix<<" "<<iy<<" "<<Ux0/Ufan<<" "<<Uy0/Ufan<<endl;
     }
     MyFile<<endl;
   }
@@ -420,16 +420,16 @@ void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
 int main(int argc, char *argv[]) {
 
   LatticeBoltzmann Air;
-  int t,tmax=10000.0;
+  int t,tmax=7500.0;
   double rho0=1.0;
-  double Ufan0 = 0.1;
+  double Ufan0 = 0.2960;
   double dt = 1.0;
-  double a = 32.0; //Ancho
-  double b = 16.0; //Largo
-  double d = 128.0; //Ubicación del lado derecho en eje x
-  double e = 16.0; //Ubicación del lado inferior en eje y
-  double nu = dt*(1/3.0)*(tau- 1.0/2);
-  int N = 64;
+  double a = 18.0; //Ancho
+  double b = 2.0; //Largo
+  double d = 68.0; //Ubicación del lado derecho en eje x
+  double e = Ly/2.0; //Ubicación del lado inferior en eje y
+  double nu = (1/3.0)*(tau- 1.0/2);
+  int N = 36*2;
   vector<double> fCoin = {0,0};
 
   double Fx;
