@@ -8,8 +8,8 @@
 
 using namespace std;
 
-const int Lx = 800;
-const int Ly = 400;
+const int Lx = 400;
+const int Ly = 300;
 
 const int Q = 9;
 
@@ -413,12 +413,12 @@ int main(int argc, char *argv[])
 {
 
   LatticeBoltzmann Air;
-  int t, tmax = 3800*4;
+  int t, tmax = 1000;
   double rho0 = 1.0;
   double Ufan0 = 0.1319; // Se recibe Ufan como argumento por consola para facilitar su estudio paralelizado.
   double dt = 1;
   double nu = dt * (1 / 3.0) * (tau - 1.0 / 2);
-  int ixc = Lx/4, iyc = Ly/2, R = 90;
+  int ixc = Lx/2, iyc = Ly/2, R = 90;
   int N = 24;
   vector<double> fCilindro = {0, 0};
 
