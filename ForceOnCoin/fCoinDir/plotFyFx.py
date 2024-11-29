@@ -10,6 +10,8 @@ Fx = data[:, 1]
 Fy = data[:, 2]
 FxProm= np.mean(Fx)
 FyProm= np.mean(Fy)
+print("Fx:", FxProm)
+print("Fy:", FyProm)
 # Crear una figura con dos subplots (1 fila, 2 columnas)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 

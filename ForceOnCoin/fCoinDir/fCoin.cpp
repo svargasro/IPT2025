@@ -8,12 +8,12 @@
 
 using namespace std;
 
-const int Lx=136;
-const int Ly=30;
+const int Lx=400;
+const int Ly=100;
 
 const int Q=9;
 
-const double tau=0.6819200000;
+const double tau=0.8000;
 const double Utau=1.0/tau;
 const double UmUtau=1-Utau;
 
@@ -420,16 +420,16 @@ void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
 int main(int argc, char *argv[]) {
 
   LatticeBoltzmann Air;
-  int t,tmax=7500.0;
+  int t,tmax=16000;
   double rho0=1.0;
-  double Ufan0 = 0.2960;
+  double Ufan0 = 0.1319;
   double dt = 1.0;
-  double a = 18.0; //Ancho
-  double b = 2.0; //Largo
-  double d = 68.0; //Ubicación del lado derecho en eje x
-  double e = Ly/2.0; //Ubicación del lado inferior en eje y
+  double a = 90; //Ancho
+  double b = 10; //Largo
+  double d = 340; //Ubicación del lado derecho en eje x
+  double e = 50; //Ubicación del lado inferior en eje y
   double nu = (1/3.0)*(tau- 1.0/2);
-  int N = 36*2;
+  int N = 36;
   vector<double> fCoin = {0,0};
 
   double Fx;
@@ -460,3 +460,6 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }  
+
+
+///https://github.com/jviquerat/lbm/tree/master/lbm/src/app
