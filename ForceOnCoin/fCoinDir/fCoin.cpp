@@ -142,7 +142,7 @@ void LatticeBoltzmann::ImposeFields(double Ufan, double a, double b, double d, d
       else if(iy<y2 && iy>y1 && ix>x1 && ix<x2){
         for(i=0;i<Q;i++) {n0=n(ix,iy,i); fnew[n0]=feq(rho0,0,0,i);}
       }
-      else if(iy<y1)
+      else if(iy<(y1-10))
         for(i=0;i<Q;i++){n0=n(ix,iy,i); fnew[n0]=feq(rho0,0,0,i);}
 
       //An extra point at one side to break the isotropy
@@ -402,10 +402,10 @@ vector<double> LatticeBoltzmann::FOnCoin(double nu, double dt, int N, double a, 
 
 void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
   ofstream MyFile(NameFile); int ix,iy; double rho0,Ux0,Uy0;
-  for(ix=0;ix<Lx;ix+=1){
-    for(iy=0;iy<Ly;iy+=1){
+  for(ix=0;ix<Lx;ix+=5){
+    for(iy=0;iy<Ly;iy+=5){
       rho0 = rho(ix,iy,true); Ux0=Jx(ix,iy,true)/rho0; Uy0=Jy(ix,iy,true)/rho0;
-      MyFile<<ix<<" "<<iy<<" "<<Ux0/Ufan<<" "<<Uy0/Ufan<<endl;
+      MyFile<<ix<<" "<<iy<<" "<<(3*Ux0)/Ufan<<" "<<(3*Uy0)/Ufan<<endl;
     }
     MyFile<<endl;
   }
@@ -420,13 +420,13 @@ void LatticeBoltzmann::Print(const char * NameFile,double Ufan){
 int main(int argc, char *argv[]) {
 
   LatticeBoltzmann Air;
-  int t,tmax=16000;
+  int t,tmax=3000;
   double rho0=1.0;
-  double Ufan0 = 0.1319;
+  double Ufan0 = 0.139;
   double dt = 1.0;
   double a = 90; //Ancho
   double b = 10; //Largo
-  double d = 340; //Ubicación del lado derecho en eje x
+  double d = Lx/4+a; //Ubicación del lado derecho en eje x
   double e = 50; //Ubicación del lado inferior en eje y
   double nu = (1/3.0)*(tau- 1.0/2);
   int N = 36;
